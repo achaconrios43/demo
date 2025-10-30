@@ -1,0 +1,47 @@
+:host {
+	display: block;
+	height: 100%;
+}
+
+.login-wrapper {
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 16px;
+}
+
+.card {
+	width: 100%;
+	max-width: 420px;
+	border-radius: 14px;
+	box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+	text-align: center;
+	padding-top: 36px;
+}
+
+.avatar {
+	width: 84px;
+	height: 84px;
+	border-radius: 50%;
+	background: linear-gradient(135deg, #6b5bff, #8be9ff);
+	color: white;
+	font-weight: 700;
+	font-size: 32px;
+	line-height: 84px;
+	margin: -60px auto 12px auto;
+	box-shadow: 0 6px 18px rgba(107,91,255,0.2);
+}
+
+.actions {
+	margin-top: 12px;
+	display: grid;
+	gap: 8px;
+}
+
+.eye-icon {
+	font-size: 18px;
+	opacity: 0.6;
+	cursor: pointer;
+}
+
