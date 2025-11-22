@@ -1,0 +1,83 @@
+.details-container {
+  padding: 16px;
+  
+  .header-card .activity-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    
+    .activity-info {
+      flex: 1;
+      margin-right: 16px;
+      
+      h1 { margin: 0 0 12px 0; font-size: 20px; font-weight: 600; }
+      .badges-row { display: flex; gap: 8px; flex-wrap: wrap; }
+      .badges-row ion-badge { font-size: 12px; padding: 4px 8px; }
+    }
+    
+    .activity-score {
+      text-align: center;
+      
+      .score-circle {
+        width: 80px; height: 80px; border-radius: 50%;
+        background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-secondary));
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        color: white; margin-bottom: 8px;
+        
+        .score-number { font-size: 24px; font-weight: 700; }
+        .score-label { font-size: 12px; opacity: 0.8; }
+      }
+    }
+  }
+  
+  ion-card-title {
+    display: flex; align-items: center; font-size: 18px;
+    .section-icon { margin-right: 8px; color: var(--ion-color-primary); }
+  }
+  
+  .detail-grid .detail-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 0; border-bottom: 1px solid var(--ion-color-light);
+    
+    .detail-label {
+      display: flex; align-items: center; color: var(--ion-color-medium); font-weight: 500;
+      .detail-icon { margin-right: 8px; font-size: 16px; }
+    }
+    .detail-value { text-align: right; font-weight: 600; max-width: 60%; }
+  }
+  
+  .description-content p, .observations-content p { margin: 0; line-height: 1.5; }
+  
+  .metrics-grid .metric-item {
+    margin-bottom: 20px;
+    .metric-label { font-weight: 500; color: var(--ion-color-medium); margin-bottom: 8px; font-size: 14px; }
+    
+    .progress-container {
+      display: flex; align-items: center; gap: 12px;
+      .progress-bar { flex: 1; height: 8px; background: var(--ion-color-light); border-radius: 4px; }
+      .progress-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+      .progress-text { font-weight: 600; min-width: 40px; }
+    }
+  }
+  
+  .action-button { --border-radius: 12px; height: 48px; margin-bottom: 12px; font-weight: 600; }
+}
+
+.progress-low { background: var(--ion-color-danger); }
+.progress-medium { background: var(--ion-color-warning); }
+.progress-high { background: var(--ion-color-success); }
+
+.not-found {
+  text-align: center; padding: 80px 20px;
+  .not-found-icon { font-size: 80px; color: var(--ion-color-medium); margin-bottom: 20px; }
+  h2 { margin: 0 0 12px 0; font-size: 22px; }
+  p { margin: 0 0 24px 0; color: var(--ion-color-medium); font-size: 14px; }
+}
+
+@media (max-width: 768px) {
+  .details-container {
+    .header-card .activity-header { flex-direction: column; align-items: center; text-align: center; }
+    .detail-grid .detail-item { flex-direction: column; align-items: flex-start; }
+    .detail-value { text-align: left; max-width: 100%; margin-top: 4px; }
+  }
+}

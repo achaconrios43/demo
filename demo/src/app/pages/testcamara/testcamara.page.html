@@ -1,0 +1,116 @@
+<!-- Página de prueba de cámara -->
+
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Test Cámara</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Test Cámara</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <!-- Card principal -->
+  <ion-card>
+    <ion-card-content>
+      
+      <!-- Botón para tomar foto -->
+      <ion-button 
+        expand="block" 
+        color="primary" 
+        (click)="tomarFoto()" 
+        [disabled]="tomandoFoto"
+        style="margin-bottom: 10px;">
+        <ion-icon name="camera-outline" slot="start"></ion-icon>
+        {{tomandoFoto ? 'Tomando foto...' : 'Tomar Foto'}}
+      </ion-button>
+
+      <!-- Botón para seleccionar de galería -->
+      <ion-button 
+        expand="block" 
+        color="secondary" 
+        (click)="seleccionarDeGaleria()" 
+        [disabled]="tomandoFoto">
+        <ion-icon name="images-outline" slot="start"></ion-icon>
+        {{tomandoFoto ? 'Seleccionando...' : 'Seleccionar de Galería'}}
+      </ion-button>
+
+      <!-- Botón para volver a inicio -->
+      <ion-button 
+        expand="block" 
+        color="light" 
+        (click)="router.navigate(['/home'])"
+        style="margin-top: 10px;">
+        <ion-icon name="home-outline" slot="start"></ion-icon>
+        Volver a Inicio
+      </ion-button>
+
+      <!-- Imagen actual capturada -->
+      <div *ngIf="foto" style="margin-top: 20px; text-align: center; border-top: 1px solid #ddd; padding-top: 20px;">
+        <h3>Imagen Actual</h3>
+        <img 
+          [src]="foto" 
+          alt="Foto capturada" 
+          style="max-width: 100%; height: auto; border-radius: 8px; margin-bottom: 15px;" />
+
+        <!-- Botón para limpiar foto -->
+        <ion-button 
+          expand="block" 
+          color="danger" 
+          fill="outline" 
+          (click)="limpiarFoto()">
+          <ion-icon name="trash-outline" slot="start"></ion-icon>
+          Limpiar Foto
+        </ion-button>
+      </div>
+
+      <!-- Todas las fotos guardadas -->
+      <div *ngIf="fotoscamara.length > 0" style="margin-top: 20px; border-top: 1px solid #ddd; padding-top: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+          <h3 style="margin: 0;">Todas las Fotos Guardadas ({{fotoscamara.length}})</h3>
+          <ion-button 
+            color="danger" 
+            size="small"
+            (click)="eliminarTodasLasFotos()">
+            <ion-icon name="trash-outline" slot="start"></ion-icon>
+            Eliminar Todas
+          </ion-button>
+        </div>
+        
+        <div *ngFor="let fotoGuardada of fotoscamara; let i = index" 
+             style="margin-bottom: 15px; padding: 10px; border: 1px solid #eee; border-radius: 8px;">
+          <p><strong>Foto #{{i + 1}}</strong></p>
+          <p style="font-size: 12px; color: #666;">{{fotoGuardada.nombre}}</p>
+          <p style="font-size: 11px; color: #999;">{{fotoGuardada.fechaCaptura | date:'dd/MM/yyyy HH:mm'}}</p>
+          <img 
+            [src]="fotoGuardada.base64Data" 
+            [alt]="fotoGuardada.nombre" 
+            style="max-width: 100%; height: auto; border-radius: 8px; margin-bottom: 10px;" />
+          
+          <!-- Botón para eliminar esta foto -->
+          <ion-button 
+            expand="block" 
+            color="danger" 
+            size="small"
+            fill="outline" 
+            (click)="eliminarFoto(i)">
+            <ion-icon name="trash-outline" slot="start"></ion-icon>
+            Eliminar
+          </ion-button>
+        </div>
+      </div>
+
+      <!-- Mensaje cuando no hay fotos -->
+      <div *ngIf="!foto && fotoscamara.length === 0" style="text-align: center; color: #666; margin-top: 20px; padding: 20px;">
+        <ion-icon name="camera-outline" size="large" style="opacity: 0.5;"></ion-icon>
+        <p>No hay imágenes capturadas</p>
+        <p><small>Use los botones superiores para tomar una foto o seleccionar de la galería</small></p>
+      </div>
+
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>

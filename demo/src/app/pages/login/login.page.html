@@ -1,0 +1,127 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>
+      <ion-icon name="server-outline" class="title-icon"></ion-icon>
+      Control de Acceso Data Center
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="login-content">
+  <div class="login-container">
+    <div class="login-card">
+      <div class="logo-section">
+        <ion-icon name="business-outline" class="logo-icon"></ion-icon>
+        <h1>Sistema de Control de Acceso</h1>
+        <p>Data Centers y Centros de Misión Crítica</p>
+        <p class="subtitle">Registro y seguimiento de ingresos de técnicos</p>
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <ion-item fill="outline" class="login-item">
+          <ion-label position="floating">Usuario</ion-label>
+          <ion-input
+            type="text"
+            formControlName="usuario"
+            placeholder="Ingrese su usuario">
+          </ion-input>
+          <ion-icon name="person" slot="start"></ion-icon>
+        </ion-item>
+        
+        <div class="error-message" *ngIf="loginForm.get('usuario')?.touched && loginForm.get('usuario')?.errors?.['required']">
+          El usuario es requerido
+        </div>
+
+        <ion-item fill="outline" class="login-item">
+          <ion-label position="floating">Contraseña</ion-label>
+          <ion-input
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+            placeholder="Ingrese su contraseña">
+          </ion-input>
+          <ion-icon name="lock-closed" slot="start"></ion-icon>
+          <ion-icon 
+            [name]="showPassword ? 'eye-off' : 'eye'" 
+            slot="end" 
+            (click)="togglePassword()"
+            class="password-toggle">
+          </ion-icon>
+        </ion-item>
+
+        <div class="error-message" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['required']">
+          La contraseña es requerida
+        </div>
+
+        <div class="error-message" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
+
+        <ion-button 
+          expand="block" 
+          type="submit" 
+          [disabled]="loginForm.invalid || isLoading"
+          class="login-button">
+          <ion-spinner name="crescent" *ngIf="isLoading"></ion-spinner>
+          <span *ngIf="!isLoading">Ingresar al Sistema</span>
+        </ion-button>
+      </form>
+
+      <!-- Botones de acceso rápido -->
+      <div class="demo-section">
+        <ion-text color="medium" class="demo-title">
+          <p><strong>Acceso Demo:</strong></p>
+        </ion-text>
+        
+        <ion-grid>
+          <ion-row>
+            <ion-col size="6">
+              <ion-button 
+                expand="block" 
+                fill="outline" 
+                color="primary"
+                (click)="loginAsDemo('admin')"
+                [disabled]="isLoading"
+                class="demo-button">
+                <ion-icon name="shield-checkmark-outline" slot="start"></ion-icon>
+                Admin
+              </ion-button>
+            </ion-col>
+            <ion-col size="6">
+              <ion-button 
+                expand="block" 
+                fill="outline" 
+                color="secondary"
+                (click)="loginAsDemo('seguridad')"
+                [disabled]="isLoading"
+                class="demo-button">
+                <ion-icon name="business-outline" slot="start"></ion-icon>
+                Seguridad
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+
+      <!-- Información de centros -->
+      <div class="info-section">
+        <ion-card class="info-card">
+          <ion-card-content>
+            <ion-text color="medium">
+              <p class="info-title"><strong>Centros Disponibles:</strong></p>
+              <ul class="centers-list">
+                <li>• Data Center Apoquindo</li>
+                <li>• Data Center San Martín</li>
+                <li>• MC Independencia</li>
+                <li>• MC Chiloé</li>
+                <li>• MC La Florida</li>
+                <li>• MC Providencia</li>
+                <li>• MC Manuel Montt</li>
+                <li>• MC Pedro de Valdivia</li>
+              </ul>
+            </ion-text>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+  </div>
+</ion-content>

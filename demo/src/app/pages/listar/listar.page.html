@@ -1,0 +1,268 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Ingresos de Técnicos</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="navigateToAgregar()">
+        <ion-icon name="person-add"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="list-container">
+    <!-- Barra de búsqueda y filtros -->
+    <ion-card class="search-card">
+      <ion-card-content>
+        <!-- Búsqueda -->
+        <ion-searchbar
+          [(ngModel)]="searchTerm"
+          (ionInput)="onSearchChange($event)"
+          placeholder="Buscar por técnico, empresa, ticket..."
+          show-clear-button="focus">
+        </ion-searchbar>
+
+        <!-- Botón de filtros -->
+        <ion-button 
+          fill="outline" 
+          size="small" 
+          (click)="toggleFilters()"
+          class="filter-button">
+          <ion-icon name="filter" slot="start"></ion-icon>
+          Filtros
+          <ion-badge color="primary" *ngIf="activeFiltersCount > 0">{{ activeFiltersCount }}</ion-badge>
+        </ion-button>
+
+        <!-- Panel de filtros -->
+        <div class="filters-panel" *ngIf="showFilters">
+          <ion-grid>
+            <ion-row>
+              <ion-col size="12" size-md="6">
+                <ion-item fill="outline">
+                  <ion-label>Data Center</ion-label>
+                  <ion-select 
+                    [(ngModel)]="filtros.dataCenter" 
+                    (ionChange)="applyFilters()"
+                    placeholder="Todos los centros">
+                    <ion-select-option [value]="undefined">Todos los centros</ion-select-option>
+                    <ion-select-option *ngFor="let dc of dataCenters" [value]="dc.nombre">
+                      {{ dc.nombre }}
+                    </ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+              
+              <ion-col size="12" size-md="6">
+                <ion-item fill="outline">
+                  <ion-label>Sala</ion-label>
+                  <ion-select 
+                    [(ngModel)]="filtros.sala" 
+                    (ionChange)="applyFilters()"
+                    placeholder="Todas las salas">
+                    <ion-select-option [value]="undefined">Todas las salas</ion-select-option>
+                    <ion-select-option *ngFor="let sala of salasDisponibles" [value]="sala">
+                      {{ sala }}
+                    </ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+              
+              <ion-col size="12" size-md="6">
+                <ion-item fill="outline">
+                  <ion-label>Tipo de Ticket</ion-label>
+                  <ion-select 
+                    [(ngModel)]="filtros.tipoTicket" 
+                    (ionChange)="applyFilters()"
+                    placeholder="Todos los tipos">
+                    <ion-select-option [value]="undefined">Todos los tipos</ion-select-option>
+                    <ion-select-option *ngFor="let tipo of tiposTicket" [value]="tipo.value">
+                      {{ tipo.label }}
+                    </ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+              
+              <ion-col size="12" size-md="6">
+                <ion-item fill="outline">
+                  <ion-label>Estado</ion-label>
+                  <ion-select 
+                    [(ngModel)]="filtros.estado" 
+                    (ionChange)="applyFilters()"
+                    placeholder="Todos los estados">
+                    <ion-select-option [value]="undefined">Todos los estados</ion-select-option>
+                    <ion-select-option *ngFor="let estado of estadosIngreso" [value]="estado.value">
+                      {{ estado.label }}
+                    </ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
+                <ion-item fill="outline">
+                  <ion-label>Empresa</ion-label>
+                  <ion-select 
+                    [(ngModel)]="filtros.empresa" 
+                    (ionChange)="applyFilters()"
+                    placeholder="Todas las empresas">
+                    <ion-select-option [value]="undefined">Todas las empresas</ion-select-option>
+                    <ion-select-option *ngFor="let empresa of empresasUnicas" [value]="empresa">
+                      {{ empresa }}
+                    </ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+
+              <ion-col size="12" size-md="6">
+                <ion-item fill="outline">
+                  <ion-label>Fecha</ion-label>
+                  <ion-datetime 
+                    [(ngModel)]="filtros.fechaDesde"
+                    (ionChange)="applyFilters()"
+                    display-format="DD/MM/YYYY"
+                    placeholder="Desde">
+                  </ion-datetime>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            
+            <ion-row>
+              <ion-col>
+                <ion-button 
+                  fill="clear" 
+                  size="small" 
+                  (click)="clearFilters()">
+                  <ion-icon name="refresh" slot="start"></ion-icon>
+                  Limpiar Filtros
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Contador de resultados -->
+    <div class="results-info">
+      <ion-text color="medium">
+        <p>{{ ingresosFiltrados.length }} ingreso(s) encontrado(s)</p>
+      </ion-text>
+    </div>
+
+    <!-- Lista de ingresos -->
+    <div class="ingresos-list" *ngIf="ingresosFiltrados.length > 0; else noIngresos">
+      <ion-card 
+        *ngFor="let ingreso of ingresosFiltrados" 
+        class="ingreso-card"
+        (click)="viewDetails(ingreso.id)">
+        <ion-card-content>
+          <div class="ingreso-header">
+            <div class="ingreso-title">
+              <h3>{{ ingreso.tecnico.nombre }} {{ ingreso.tecnico.apellido }}</h3>
+              <ion-badge 
+                [color]="getEstadoColor(ingreso.estado)"
+                class="estado-badge">
+                {{ getEstadoLabel(ingreso.estado) }}
+              </ion-badge>
+            </div>
+            <div class="ingreso-ticket">
+              <ion-icon name="document-text" class="ticket-icon"></ion-icon>
+              <span>{{ ingreso.numeroTicket }}</span>
+            </div>
+          </div>
+
+          <div class="ingreso-details">
+            <div class="detail-row">
+              <ion-icon name="person" class="detail-icon"></ion-icon>
+              <span>{{ ingreso.tecnico.rut }}</span>
+            </div>
+            
+            <div class="detail-row">
+              <ion-icon name="business" class="detail-icon"></ion-icon>
+              <span>{{ ingreso.tecnico.empresa }}</span>
+            </div>
+            
+            <div class="detail-row">
+              <ion-icon name="layers" class="detail-icon"></ion-icon>
+              <span>{{ ingreso.sala.nombre }} - {{ ingreso.dataCenter.nombre }}</span>
+            </div>
+            
+            <div class="detail-row">
+              <ion-icon name="clipboard" class="detail-icon"></ion-icon>
+              <span>{{ getTipoTicketLabel(ingreso.tipoTicket) }}</span>
+            </div>
+
+            <div class="detail-row">
+              <ion-icon name="calendar" class="detail-icon"></ion-icon>
+              <span>{{ ingreso.fechaIngreso | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+
+            <div class="detail-row">
+              <ion-icon name="person-circle" class="detail-icon"></ion-icon>
+              <span>Resp: {{ ingreso.responsableActividad }}</span>
+            </div>
+          </div>
+
+          <div class="ingreso-actions">
+            <ion-button 
+              fill="clear" 
+              size="small" 
+              (click)="editIngreso(ingreso.id, $event)">
+              <ion-icon name="create" slot="icon-only"></ion-icon>
+            </ion-button>
+            
+            <ion-button 
+              fill="clear" 
+              size="small" 
+              color="success"
+              *ngIf="ingreso.estado === EstadoIngreso.PENDIENTE"
+              (click)="marcarEnProceso(ingreso.id, $event)">
+              <ion-icon name="play" slot="icon-only"></ion-icon>
+            </ion-button>
+
+            <ion-button 
+              fill="clear" 
+              size="small" 
+              color="warning"
+              *ngIf="ingreso.estado === EstadoIngreso.EN_PROCESO"
+              (click)="marcarFinalizado(ingreso.id, $event)">
+              <ion-icon name="checkmark" slot="icon-only"></ion-icon>
+            </ion-button>
+            
+            <ion-button 
+              fill="clear" 
+              size="small"
+              (click)="viewDetails(ingreso.id, $event)">
+              <ion-icon name="eye" slot="icon-only"></ion-icon>
+            </ion-button>
+
+            <ion-button 
+              fill="clear" 
+              size="small" 
+              color="danger"
+              (click)="deleteIngreso(ingreso.id, $event)">
+              <ion-icon name="trash" slot="icon-only"></ion-icon>
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- Sin ingresos -->
+    <ng-template #noIngresos>
+      <div class="no-ingresos">
+        <ion-icon name="people" class="no-ingresos-icon"></ion-icon>
+        <h3>No se encontraron ingresos</h3>
+        <p>No hay ingresos que coincidan con los criterios de búsqueda</p>
+        <ion-button 
+          (click)="navigateToAgregar()"
+          fill="outline">
+          <ion-icon name="person-add" slot="start"></ion-icon>
+          Registrar Primer Ingreso
+        </ion-button>
+      </div>
+    </ng-template>
+  </div>
+</ion-content>

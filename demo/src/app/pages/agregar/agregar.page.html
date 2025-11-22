@@ -1,0 +1,204 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Registrar Ingreso Técnico</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="form-container">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="person-add" class="title-icon"></ion-icon>
+          Nuevo Ingreso de Técnico
+        </ion-card-title>
+        <ion-card-subtitle>
+          Complete la información del técnico que ingresará al Data Center
+        </ion-card-subtitle>
+      </ion-card-header>
+      
+      <ion-card-content>
+        <form [formGroup]="ingresoForm" (ngSubmit)="onSubmit()">
+          <!-- Nombre y Apellido -->
+          <ion-item fill="outline" class="form-item">
+            <ion-label position="floating">Nombre y Apellido del Técnico *</ion-label>
+            <ion-input 
+              formControlName="nombreCompleto" 
+              placeholder="Ej: Juan Pérez González"
+              clearInput="true">
+            </ion-input>
+            <ion-icon name="person" slot="start" class="form-icon"></ion-icon>
+          </ion-item>
+          
+          <div class="error-message" *ngIf="ingresoForm.get('nombreCompleto')?.touched && ingresoForm.get('nombreCompleto')?.errors?.['required']">
+            El nombre completo es requerido
+          </div>
+
+          <!-- RUT -->
+          <ion-item fill="outline" class="form-item">
+            <ion-label position="floating">RUT del Técnico *</ion-label>
+            <ion-input 
+              formControlName="rut" 
+              placeholder="Ej: 12.345.678-9"
+              clearInput="true">
+            </ion-input>
+            <ion-icon name="card" slot="start" class="form-icon"></ion-icon>
+          </ion-item>
+          
+          <div class="error-message" *ngIf="ingresoForm.get('rut')?.touched && ingresoForm.get('rut')?.errors">
+            <span *ngIf="ingresoForm.get('rut')?.errors?.['required']">El RUT es requerido</span>
+            <span *ngIf="ingresoForm.get('rut')?.errors?.['rutInvalido']">Formato de RUT inválido</span>
+          </div>
+
+          <!-- Empresa -->
+          <ion-item fill="outline" class="form-item">
+            <ion-label position="floating">Empresa *</ion-label>
+            <ion-input 
+              formControlName="empresa" 
+              placeholder="Ej: Tecnologías ABC Ltda."
+              clearInput="true">
+            </ion-input>
+            <ion-icon name="business" slot="start" class="form-icon"></ion-icon>
+          </ion-item>
+          
+          <div class="error-message" *ngIf="ingresoForm.get('empresa')?.touched && ingresoForm.get('empresa')?.errors?.['required']">
+            La empresa es requerida
+          </div>
+
+          <!-- Actividad a Realizar -->
+          <ion-item fill="outline" class="form-item">
+            <ion-label position="floating">Actividad a Realizar *</ion-label>
+            <ion-textarea 
+              formControlName="actividad"
+              placeholder="Describe la actividad técnica a realizar"
+              rows="3"
+              auto-grow="true">
+            </ion-textarea>
+            <ion-icon name="construct" slot="start" class="form-icon"></ion-icon>
+          </ion-item>
+          
+          <div class="error-message" *ngIf="ingresoForm.get('actividad')?.touched && ingresoForm.get('actividad')?.errors?.['required']">
+            La descripción de la actividad es requerida
+          </div>
+
+          <!-- Sala de Ingreso -->
+          <ion-item fill="outline" class="form-item">
+            <ion-label position="floating">Sala de Ingreso *</ion-label>
+            <ion-select 
+              formControlName="sala" 
+              placeholder="Seleccione la sala técnica"
+              interface="popover">
+              <ion-select-option *ngFor="let sala of salasDisponibles" [value]="sala">
+                {{ sala }}
+              </ion-select-option>
+            </ion-select>
+            <ion-icon name="layers" slot="start" class="form-icon"></ion-icon>
+          </ion-item>
+          
+          <div class="error-message" *ngIf="ingresoForm.get('sala')?.touched && ingresoForm.get('sala')?.errors?.['required']">
+            La sala de ingreso es requerida
+          </div>
+
+          <!-- Número de Ticket -->
+          <ion-item fill="outline" class="form-item">
+            <ion-label position="floating">Número de Ticket *</ion-label>
+            <ion-input 
+              formControlName="numeroTicket" 
+              placeholder="Ej: CRQ000123456"
+              clearInput="true">
+            </ion-input>
+            <ion-icon name="document-text" slot="start" class="form-icon"></ion-icon>
+          </ion-item>
+          
+          <div class="error-message" *ngIf="ingresoForm.get('numeroTicket')?.touched && ingresoForm.get('numeroTicket')?.errors?.['required']">
+            El número de ticket es requerido
+          </div>
+
+          <!-- Tipo de Ticket -->
+          <ion-item fill="outline" class="form-item">
+            <ion-label position="floating">Tipo de Ticket *</ion-label>
+            <ion-select 
+              formControlName="tipoTicket" 
+              placeholder="Seleccione el tipo de ticket"
+              interface="popover">
+              <ion-select-option *ngFor="let tipo of tiposTicket" [value]="tipo.value">
+                {{ tipo.label }}
+              </ion-select-option>
+            </ion-select>
+            <ion-icon name="clipboard" slot="start" class="form-icon"></ion-icon>
+          </ion-item>
+          
+          <div class="error-message" *ngIf="ingresoForm.get('tipoTicket')?.touched && ingresoForm.get('tipoTicket')?.errors?.['required']">
+            El tipo de ticket es requerido
+          </div>
+
+          <!-- Responsable -->
+          <ion-item fill="outline" class="form-item">
+            <ion-label position="floating">Responsable *</ion-label>
+            <ion-input 
+              formControlName="responsable" 
+              placeholder="Nombre del responsable del trabajo"
+              clearInput="true">
+            </ion-input>
+            <ion-icon name="person-circle" slot="start" class="form-icon"></ion-icon>
+          </ion-item>
+          
+          <div class="error-message" *ngIf="ingresoForm.get('responsable')?.touched && ingresoForm.get('responsable')?.errors?.['required']">
+            El responsable es requerido
+          </div>
+
+          <!-- Autorizador -->
+          <ion-item fill="outline" class="form-item">
+            <ion-label position="floating">Autorizador *</ion-label>
+            <ion-input 
+              formControlName="autorizador" 
+              placeholder="Nombre de quien autoriza el ingreso"
+              clearInput="true">
+            </ion-input>
+            <ion-icon name="shield-checkmark" slot="start" class="form-icon"></ion-icon>
+          </ion-item>
+          
+          <div class="error-message" *ngIf="ingresoForm.get('autorizador')?.touched && ingresoForm.get('autorizador')?.errors?.['required']">
+            El autorizador es requerido
+          </div>
+
+          <!-- Observaciones -->
+          <ion-item fill="outline" class="form-item">
+            <ion-label position="floating">Observaciones (Opcional)</ion-label>
+            <ion-textarea 
+              formControlName="observaciones"
+              placeholder="Comentarios adicionales sobre el ingreso"
+              rows="3"
+              auto-grow="true">
+            </ion-textarea>
+            <ion-icon name="chatbubble-ellipses" slot="start" class="form-icon"></ion-icon>
+          </ion-item>
+
+          <!-- Botones -->
+          <div class="button-group">
+            <ion-button 
+              fill="clear" 
+              color="medium" 
+              (click)="cancelar()"
+              [disabled]="isLoading">
+              <ion-icon name="close" slot="start"></ion-icon>
+              Cancelar
+            </ion-button>
+            
+            <ion-button 
+              type="submit" 
+              [disabled]="ingresoForm.invalid || isLoading"
+              class="submit-button">
+              <ion-spinner name="crescent" *ngIf="isLoading"></ion-spinner>
+              <ion-icon name="person-add" slot="start" *ngIf="!isLoading"></ion-icon>
+              <span *ngIf="!isLoading">Registrar Ingreso</span>
+            </ion-button>
+          </div>
+        </form>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

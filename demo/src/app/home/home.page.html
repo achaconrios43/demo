@@ -1,0 +1,312 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>
+      <ion-icon name="server-outline"></ion-icon>
+      Dashboard Data Center
+    </ion-title>
+    <ion-button slot="end" fill="clear" (click)="logout()">
+      <ion-icon name="exit-outline"></ion-icon>
+    </ion-button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="dashboard-content">
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="refresh-outline"
+      pullingText="Tirar para actualizar"
+      refreshingSpinner="crescent"
+      refreshingText="Actualizando...">
+    </ion-refresher-content>
+  </ion-refresher>
+
+
+  <div class="dashboard-container">
+    
+    <!-- Sección de bienvenida -->
+    <div class="welcome-section">
+      <ion-card class="welcome-card">
+        <ion-card-content>
+          <div class="welcome-content">
+            <div class="welcome-icon">
+              <ion-icon name="shield-checkmark-outline"></ion-icon>
+            </div>
+            <div class="welcome-text">
+              <h2>{{ getGreeting() }}, {{ usuarioActual?.nombre || 'Usuario' }}</h2>
+              <p>{{ getRoleDisplayName(usuarioActual?.rol) }}</p>
+              <small>Sistema de Control de Acceso - {{ currentDate.toLocaleDateString('es-CL') }}</small>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- Estadísticas principales -->
+    <div class="stats-section" *ngIf="estadisticas">
+      <ion-grid>
+        <ion-row>
+          <ion-col size="6" size-md="3">
+            <ion-card class="stat-card">
+              <ion-card-content>
+                <div class="stat-content">
+                  <ion-icon name="people-outline" class="stat-icon primary"></ion-icon>
+                  <div class="stat-text">
+                    <h3>{{ estadisticas.totalIngresos }}</h3>
+                    <p>Total Ingresos</p>
+                  </div>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          
+          <ion-col size="6" size-md="3">
+            <ion-card class="stat-card">
+              <ion-card-content>
+                <div class="stat-content">
+                  <ion-icon name="time-outline" class="stat-icon warning"></ion-icon>
+                  <div class="stat-text">
+                    <h3>{{ estadisticas.ingresosHoy }}</h3>
+                    <p>Ingresos Hoy</p>
+                  </div>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          
+          <ion-col size="6" size-md="3">
+            <ion-card class="stat-card">
+              <ion-card-content>
+                <div class="stat-content">
+                  <ion-icon name="warning-outline" class="stat-icon danger"></ion-icon>
+                  <div class="stat-text">
+                    <h3>{{ estadisticas.ingresosPendientes }}</h3>
+                    <p>Pendientes</p>
+                  </div>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          
+          <ion-col size="6" size-md="3">
+            <ion-card class="stat-card">
+              <ion-card-content>
+                <div class="stat-content">
+                  <ion-icon name="checkmark-circle-outline" class="stat-icon success"></ion-icon>
+                  <div class="stat-text">
+                    <h3>{{ estadisticas.ingresosEnProceso }}</h3>
+                    <p>En Proceso</p>
+                  </div>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+
+    <!-- Navegación rápida -->
+    <div class="navigation-section">
+      <ion-grid>
+        <ion-row>
+          <ion-col size="6" size-md="3">
+            <ion-card class="nav-card" (click)="navigateTo('agregar')">
+              <ion-card-content>
+                <div class="nav-content">
+                  <ion-icon name="add-circle-outline" class="nav-icon"></ion-icon>
+                  <div class="nav-text">
+                    <h3>Registrar Ingreso</h3>
+                    <p>Nuevo técnico</p>
+                  </div>
+                  <ion-icon name="chevron-forward-outline" class="nav-arrow"></ion-icon>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          
+          <ion-col size="6" size-md="3">
+            <ion-card class="nav-card" (click)="navigateTo('listar')">
+              <ion-card-content>
+                <div class="nav-content">
+                  <ion-icon name="list-outline" class="nav-icon"></ion-icon>
+                  <div class="nav-text">
+                    <h3>Ver Ingresos</h3>
+                    <p>Lista completa</p>
+                  </div>
+                  <ion-icon name="chevron-forward-outline" class="nav-arrow"></ion-icon>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          
+          <ion-col size="6" size-md="3">
+            <ion-card class="nav-card" (click)="navigateTo('reportes')">
+              <ion-card-content>
+                <div class="nav-content">
+                  <ion-icon name="bar-chart-outline" class="nav-icon"></ion-icon>
+                  <div class="nav-text">
+                    <h3>Reportes</h3>
+                    <p>Estadísticas</p>
+                  </div>
+                  <ion-icon name="chevron-forward-outline" class="nav-arrow"></ion-icon>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          
+          <ion-col size="6" size-md="3">
+            <ion-card class="nav-card" (click)="navigateTo('configuracion')">
+              <ion-card-content>
+                <div class="nav-content">
+                  <ion-icon name="settings-outline" class="nav-icon"></ion-icon>
+                  <div class="nav-text">
+                    <h3>Configuración</h3>
+                    <p>Ajustes</p>
+                  </div>
+                  <ion-icon name="chevron-forward-outline" class="nav-arrow"></ion-icon>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          
+           <!-- tomar o cargar fotografia -->
+          <ion-col size="6" size-md="3">
+            <ion-card class="nav-card" (click)="navigateTo('testcamara')">
+              <ion-card-content>
+                <div class="nav-content">
+                  <ion-icon name="camera-outline" class="nav-icon"></ion-icon>
+                  <div class="nav-text">
+                    <h3>Cámara</h3>
+                    <p>Tomar foto</p>
+                  </div>
+                  <ion-icon name="chevron-forward-outline" class="nav-arrow"></ion-icon>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+
+          <!-- Test Geolocalización -->
+          <ion-col size="6" size-md="3">
+            <ion-card class="nav-card" (click)="navigateTo('testgeo')">
+              <ion-card-content>
+                <div class="nav-content">
+                  <ion-icon name="location-outline" class="nav-icon"></ion-icon>
+                  <div class="nav-text">
+                    <h3>GPS</h3>
+                    <p>Ubicación</p>
+                  </div>
+                  <ion-icon name="chevron-forward-outline" class="nav-arrow"></ion-icon>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+
+          <!-- Login -->
+          <ion-col size="6" size-md="3">
+            <ion-card class="nav-card" (click)="navigateTo('login')">
+              <ion-card-content>
+                <div class="nav-content">
+                  <ion-icon name="log-out-outline" class="nav-icon"></ion-icon>
+                  <div class="nav-text">
+                    <h3>Login</h3>
+                    <p>Acceso</p>
+                  </div>
+                  <ion-icon name="chevron-forward-outline" class="nav-arrow"></ion-icon>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+
+    <!-- Información de Data Centers -->
+    <div class="centers-section" *ngIf="estadisticas">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>
+            <ion-icon name="business-outline"></ion-icon>
+            Centros Activos
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-grid>
+            <ion-row>
+              <ion-col size="12" size-md="6">
+                <div class="center-stats">
+                  <div class="stat-item">
+                    <ion-icon name="server-outline" class="stat-icon"></ion-icon>
+                    <div>
+                      <h4>{{ estadisticas.centrosActivos }}</h4>
+                      <p>Data Centers Activos</p>
+                    </div>
+                  </div>
+                  
+                  <div class="stat-item">
+                    <ion-icon name="business-outline" class="stat-icon"></ion-icon>
+                    <div>
+                      <h4>{{ estadisticas.empresasActivas }}</h4>
+                      <p>Empresas Registradas</p>
+                    </div>
+                  </div>
+                  
+                  <div class="stat-item">
+                    <ion-icon name="people-outline" class="stat-icon"></ion-icon>
+                    <div>
+                      <h4>{{ estadisticas.tecnicosRegistrados }}</h4>
+                      <p>Técnicos Únicos</p>
+                    </div>
+                  </div>
+                </div>
+              </ion-col>
+              
+              <ion-col size="12" size-md="6">
+                <div class="tickets-distribution" *ngIf="estadisticas?.distribucioTiposTicket">
+                  <h4>Distribución por Tipo de Ticket</h4>
+                  <div class="ticket-chips">
+                    <ion-chip 
+                      *ngFor="let tipo of Object.keys(estadisticas?.distribucioTiposTicket || {})" 
+                      [color]="getTipoTicketColor(tipo)">
+                      <ion-icon [name]="getTipoTicketIcon(tipo)"></ion-icon>
+                      <ion-label>{{ tipo }}: {{ $any(estadisticas?.distribucioTiposTicket)?.[tipo] }}</ion-label>
+                    </ion-chip>
+                  </div>
+                </div>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- Actividad reciente por Data Center -->
+    <div class="activity-section" *ngIf="estadisticas?.distribucionDataCenters">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>
+            <ion-icon name="bar-chart-outline"></ion-icon>
+            Actividad por Centro
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="centers-grid">
+            <div 
+              class="center-item" 
+              *ngFor="let center of Object.keys(estadisticas?.distribucionDataCenters || {})">
+              <div class="center-info">
+                <h4>{{ getDataCenterAbrev(center) }}</h4>
+                <div class="center-bar">
+                  <div 
+                    class="center-progress" 
+                    [style.width.%]="estadisticas?.distribucionDataCenters?.[center] && estadisticas?.totalIngresos ? (estadisticas?.distribucionDataCenters?.[center]! / estadisticas?.totalIngresos!) * 100 : 0">
+                  </div>
+                </div>
+                <span class="center-count">{{ estadisticas?.distribucionDataCenters?.[center] }} ingresos</span>
+              </div>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+  </div>
+</ion-content>

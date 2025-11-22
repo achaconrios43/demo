@@ -1,0 +1,74 @@
+.list-container {
+  padding: 16px;
+  
+  .search-card {
+    margin: 0 0 16px 0;
+    
+    .filter-button { margin-top: 12px; --border-radius: 8px; }
+    .filter-button ion-badge { margin-left: 8px; }
+    
+    .filters-panel {
+      margin-top: 16px; border-top: 1px solid var(--ion-color-light); padding-top: 16px;
+      ion-item { --border-radius: 8px; margin-bottom: 8px; }
+    }
+  }
+  
+  .results-info { margin-bottom: 16px; }
+  .results-info p { margin: 0; font-size: 14px; }
+  
+  .activities-list .activity-card {
+    margin: 0 0 16px 0; border-radius: 12px; cursor: pointer; transition: all 0.3s ease;
+    
+    &:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); }
+    
+    .activity-header {
+      display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;
+      
+      .activity-title { flex: 1; }
+      .activity-title h3 { margin: 0 0 8px 0; font-size: 16px; font-weight: 600; line-height: 1.3; }
+      .activity-title .importance-badge { font-size: 11px; font-weight: 500; }
+      
+      .activity-score {
+        display: flex; align-items: center; color: var(--ion-color-warning); font-weight: 600;
+        .star-icon { margin-right: 4px; font-size: 16px; }
+      }
+    }
+    
+    .activity-details {
+      margin-bottom: 16px;
+      
+      .detail-row {
+        display: flex; align-items: center; margin-bottom: 8px; font-size: 14px; color: var(--ion-color-medium);
+        &:last-child { margin-bottom: 0; }
+        .detail-icon { margin-right: 8px; font-size: 16px; min-width: 16px; }
+        span { line-height: 1.3; }
+      }
+    }
+    
+    .activity-actions {
+      display: flex; justify-content: flex-end; gap: 8px; border-top: 1px solid var(--ion-color-light);
+      padding-top: 12px; margin-top: 12px;
+      ion-button { --border-radius: 8px; }
+      ion-button ion-icon { font-size: 18px; }
+    }
+  }
+  
+  .no-activities {
+    text-align: center; padding: 60px 20px;
+    
+    .no-activities-icon { font-size: 80px; color: var(--ion-color-medium); margin-bottom: 20px; }
+    h3 { margin: 0 0 12px 0; color: var(--ion-color-dark); font-size: 20px; }
+    p { margin: 0 0 24px 0; color: var(--ion-color-medium); font-size: 14px; }
+    ion-button { --border-radius: 12px; }
+  }
+}
+
+@media (max-width: 768px) {
+  .list-container {
+    padding: 12px;
+    
+    .activities-list .activity-card .activity-header { flex-direction: column; align-items: flex-start; }
+    .activities-list .activity-card .activity-header .activity-score { margin-top: 8px; }
+    .activities-list .activity-card .activity-actions { justify-content: center; }
+  }
+}

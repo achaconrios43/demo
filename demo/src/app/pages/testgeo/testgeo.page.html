@@ -1,0 +1,100 @@
+<!-- Página de prueba de geolocalización GPS -->
+
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Test Geolocalización</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Test Geolocalización</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  
+  <!-- Botón para obtener ubicación GPS -->
+  <ion-item>
+    <ion-button 
+      expand="block" 
+      color="success" 
+      (click)="obtenerUbicacion()" 
+      [disabled]="obteniendoUbicacion">
+      <ion-icon name="locate-outline" slot="start"></ion-icon>
+      {{obteniendoUbicacion ? 'Obteniendo GPS...' : 'Obtener Ubicación'}}
+    </ion-button>
+  </ion-item>
+
+  <!-- Botón para regresar a la página principal -->
+  <ion-item>
+    <ion-button 
+      expand="block" 
+      color="light" 
+      (click)="router.navigate(['/home'])">
+      <ion-icon name="home-outline" slot="start"></ion-icon>
+      Volver a Inicio
+    </ion-button>
+  </ion-item>
+    
+  <!-- Información de ubicación -->
+  <ion-list>
+    <ion-item>
+      <div style="text-align: center; width:100%;">
+        <p><strong>Ubicación GPS:</strong></p>
+        
+        <!-- Datos de ubicación -->
+        <div *ngIf="ubicacion">
+          <p><strong>Latitud:</strong> {{ubicacion.latitud | number:'1.6-6'}}</p>
+          <p><strong>Longitud:</strong> {{ubicacion.longitud | number:'1.6-6'}}</p>
+          <p><strong>Precisión:</strong> {{ubicacion.accuracy | number:'1.1-1'}} metros</p>
+          <p><strong>Timestamp:</strong> {{ubicacion.timestamp | date:'dd/MM/yyyy HH:mm:ss'}}</p>
+          <p><small><strong>Coordenadas:</strong> {{formatearCoordenadas()}}</small></p>
+        </div>
+        
+        <!-- Mensaje cuando no hay ubicación -->
+        <div *ngIf="!ubicacion">
+          <p style="color: #666;">No hay ubicación disponible</p>
+          <p><small>Presione el botón superior para obtener su ubicación actual</small></p>
+        </div>
+
+        <!-- Botones de acción -->
+        <div style="margin-top: 15px;">
+          <!-- Abrir en Google Maps -->
+          <ion-button 
+            size="small" 
+            fill="outline" 
+            color="primary"
+            [disabled]="!ubicacion" 
+            (click)="obtenerenlaceMap()"
+            style="margin-right: 10px;">
+            <ion-icon name="map-outline" slot="start"></ion-icon>
+            Ver en Maps
+          </ion-button>
+
+          <!-- Limpiar ubicación -->
+          <ion-button 
+            *ngIf="ubicacion"
+            size="small" 
+            fill="clear" 
+            color="medium"
+            (click)="limpiarUbicacion()">
+            <ion-icon name="refresh-outline" slot="start"></ion-icon>
+            Limpiar
+          </ion-button>
+        </div>
+      </div>
+    </ion-item>
+  </ion-list>
+
+  <!-- Información sobre permisos -->
+  <ion-item>
+    <div style="width: 100%; padding: 10px;">
+      <ion-icon name="information-circle-outline" style="margin-right: 5px; color: #3880ff;"></ion-icon>
+      <small style="color: #666;">
+        <strong>Nota:</strong> Esta función requiere permisos de ubicación. 
+        Para mejor precisión, asegúrese de tener el GPS activado.
+      </small>
+    </div>
+  </ion-item>
+
+</ion-content>

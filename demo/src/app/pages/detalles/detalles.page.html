@@ -1,0 +1,333 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/listar"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Detalles de Ingreso</ion-title>
+    <ion-buttons slot="end" *ngIf="registro">
+      <ion-button (click)="editarRegistro()">
+        <ion-icon name="create"></ion-icon>
+      </ion-button>
+      <ion-button (click)="eliminarRegistro()" color="danger">
+        <ion-icon name="trash"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="details-container" *ngIf="registro; else registroNotFound">
+    <!-- Encabezado del registro -->
+    <ion-card class="header-card">
+      <ion-card-content>
+        <div class="registro-header">
+          <div class="tecnico-info">
+            <h1>{{ registro.tecnico.nombre }} {{ registro.tecnico.apellido }}</h1>
+            <p class="tecnico-empresa">{{ registro.tecnico.empresa }}</p>
+            <div class="badges-row">
+              <ion-badge 
+                [color]="getEstadoColor(registro.estado)"
+                class="status-badge">
+                {{ getEstadoLabel(registro.estado) }}
+              </ion-badge>
+              <ion-badge 
+                [color]="getTipoTicketColor(registro.tipoTicket)"
+                class="ticket-badge">
+                {{ getTipoTicketLabel(registro.tipoTicket) }}
+              </ion-badge>
+            </div>
+          </div>
+          <div class="registro-tiempo">
+            <div class="tiempo-info">
+              <span class="tiempo-valor">{{ calcularTiempoTranscurrido() }}</span>
+              <span class="tiempo-label">en el Data Center</span>
+            </div>
+            <ion-text color="medium">
+              <small>Tiempo transcurrido</small>
+            </ion-text>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Información del Técnico -->
+    <ion-card class="details-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="person" class="section-icon"></ion-icon>
+          Información del Técnico
+        </ion-card-title>
+      </ion-card-header>
+      
+      <ion-card-content>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-label">
+              <ion-icon name="person-circle" class="detail-icon"></ion-icon>
+              <span>Nombre Completo</span>
+            </div>
+            <div class="detail-value">{{ registro.tecnico.nombre }} {{ registro.tecnico.apellido }}</div>
+          </div>
+
+          <div class="detail-item">
+            <div class="detail-label">
+              <ion-icon name="card" class="detail-icon"></ion-icon>
+              <span>RUT</span>
+            </div>
+            <div class="detail-value">{{ registro.tecnico.rut }}</div>
+          </div>
+
+          <div class="detail-item">
+            <div class="detail-label">
+              <ion-icon name="business" class="detail-icon"></ion-icon>
+              <span>Empresa</span>
+            </div>
+            <div class="detail-value">{{ registro.tecnico.empresa }}</div>
+          </div>
+
+          <div class="detail-item">
+            <div class="detail-label">
+              <ion-icon name="call" class="detail-icon"></ion-icon>
+              <span>Teléfono</span>
+            </div>
+            <div class="detail-value">{{ registro.tecnico.telefono }}</div>
+          </div>
+
+          <div class="detail-item">
+            <div class="detail-label">
+              <ion-icon name="mail" class="detail-icon"></ion-icon>
+              <span>Email</span>
+            </div>
+            <div class="detail-value">{{ registro.tecnico.email }}</div>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Información del Data Center y Ubicación -->
+    <ion-card class="details-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="business" class="section-icon"></ion-icon>
+          Ubicación y Data Center
+        </ion-card-title>
+      </ion-card-header>
+      
+      <ion-card-content>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-label">
+              <ion-icon name="business" class="detail-icon"></ion-icon>
+              <span>Data Center</span>
+            </div>
+            <div class="detail-value">{{ registro.dataCenter.nombre }}</div>
+          </div>
+
+          <div class="detail-item">
+            <div class="detail-label">
+              <ion-icon name="location" class="detail-icon"></ion-icon>
+              <span>Dirección</span>
+            </div>
+            <div class="detail-value">{{ registro.dataCenter.direccion }}, {{ registro.dataCenter.ciudad }}</div>
+          </div>
+
+          <div class="detail-item">
+            <div class="detail-label">
+              <ion-icon name="layers" class="detail-icon"></ion-icon>
+              <span>Sala</span>
+            </div>
+            <div class="detail-value">{{ registro.sala.nombre }}</div>
+          </div>
+
+          <div class="detail-item">
+            <div class="detail-label">
+              <ion-icon name="shield-checkmark" class="detail-icon"></ion-icon>
+              <span>Nivel de Seguridad</span>
+            </div>
+            <div class="detail-value">
+              <ion-badge [color]="getNivelSeguridadColor(registro.sala.nivelSeguridad)">
+                {{ registro.sala.nivelSeguridad | titlecase }}
+              </ion-badge>
+            </div>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Información del Ticket y Actividad -->
+    <ion-card class="details-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="document-text" class="section-icon"></ion-icon>
+          Ticket y Actividad
+        </ion-card-title>
+      </ion-card-header>
+      
+      <ion-card-content>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-label">
+              <ion-icon name="ticket" class="detail-icon"></ion-icon>
+              <span>Tipo de Ticket</span>
+            </div>
+            <div class="detail-value">{{ getTipoTicketLabel(registro.tipoTicket) }}</div>
+          </div>
+
+          <div class="detail-item">
+            <div class="detail-label">
+              <ion-icon name="clipboard" class="detail-icon"></ion-icon>
+              <span>Número de Ticket</span>
+            </div>
+            <div class="detail-value">{{ registro.numeroTicket }}</div>
+          </div>
+
+          <div class="detail-item">
+            <div class="detail-label">
+              <ion-icon name="person-circle" class="detail-icon"></ion-icon>
+              <span>Responsable de Actividad</span>
+            </div>
+            <div class="detail-value">{{ registro.responsableActividad }}</div>
+          </div>
+
+          <div class="detail-item">
+            <div class="detail-label">
+              <ion-icon name="checkmark-circle" class="detail-icon"></ion-icon>
+              <span>Autorizador de Ingreso</span>
+            </div>
+            <div class="detail-value">{{ registro.autorizadorIngreso }}</div>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Propósito y Observaciones -->
+    <ion-card class="description-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="clipboard" class="section-icon"></ion-icon>
+          Propósito de la Visita
+        </ion-card-title>
+      </ion-card-header>
+      
+      <ion-card-content>
+        <div class="description-content">
+          <p>{{ registro.proposito }}</p>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Observaciones -->
+    <ion-card class="observations-card" *ngIf="registro.observaciones">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="chatbubble-ellipses" class="section-icon"></ion-icon>
+          Observaciones
+        </ion-card-title>
+      </ion-card-header>
+      
+      <ion-card-content>
+        <div class="observations-content">
+          <p>{{ registro.observaciones }}</p>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Información de Tiempo -->
+    <ion-card class="metrics-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="time" class="section-icon"></ion-icon>
+          Control de Tiempo
+        </ion-card-title>
+      </ion-card-header>
+      
+      <ion-card-content>
+        <div class="metrics-grid">
+          <div class="metric-item">
+            <div class="metric-label">Fecha y Hora de Ingreso</div>
+            <div class="metric-value">
+              <div class="datetime-display">
+                <ion-text color="primary">
+                  <strong>{{ formatearFecha(registro.fechaIngreso) }}</strong>
+                </ion-text>
+                <br>
+                <ion-text color="medium">
+                  <small>{{ registro.horaIngreso }}</small>
+                </ion-text>
+              </div>
+            </div>
+          </div>
+          
+          <div class="metric-item" *ngIf="registro.fechaSalida">
+            <div class="metric-label">Fecha y Hora de Salida</div>
+            <div class="metric-value">
+              <div class="datetime-display">
+                <ion-text color="success">
+                  <strong>{{ formatearFecha(registro.fechaSalida) }}</strong>
+                </ion-text>
+                <br>
+                <ion-text color="medium">
+                  <small>{{ registro.horaSalida }}</small>
+                </ion-text>
+              </div>
+            </div>
+          </div>
+
+          <div class="metric-item">
+            <div class="metric-label">Estado Actual</div>
+            <div class="metric-value">
+              <ion-badge [color]="getEstadoColor(registro.estado)" size="large">
+                {{ getEstadoLabel(registro.estado) }}
+              </ion-badge>
+            </div>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Acciones -->
+    <div class="actions-section">
+      <ion-button 
+        expand="block" 
+        (click)="editarRegistro()"
+        class="action-button">
+        <ion-icon name="create" slot="start"></ion-icon>
+        Editar Registro
+      </ion-button>
+      
+      <ion-button 
+        expand="block" 
+        fill="outline" 
+        color="success"
+        *ngIf="registro.estado !== EstadoIngreso.COMPLETADO"
+        (click)="marcarCompletado()"
+        class="action-button">
+        <ion-icon name="checkmark-circle" slot="start"></ion-icon>
+        Marcar como Completado
+      </ion-button>
+      
+      <ion-button 
+        expand="block" 
+        fill="outline" 
+        color="danger"
+        (click)="eliminarRegistro()"
+        class="action-button">
+        <ion-icon name="trash" slot="start"></ion-icon>
+        Eliminar Registro
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Registro no encontrado -->
+  <ng-template #registroNotFound>
+    <div class="not-found">
+      <ion-icon name="alert-circle" class="not-found-icon"></ion-icon>
+      <h2>Registro no encontrado</h2>
+      <p>El registro de ingreso que está buscando no existe o ha sido eliminado.</p>
+      <ion-button routerLink="/listar" fill="outline">
+        <ion-icon name="arrow-back" slot="start"></ion-icon>
+        Volver a la Lista
+      </ion-button>
+    </div>
+  </ng-template>
+</ion-content>

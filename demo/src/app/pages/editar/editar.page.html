@@ -1,0 +1,329 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/listar"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Editar Registro de Ingreso</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="form-container" *ngIf="registroForm; else registroNotFound">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="create" class="title-icon"></ion-icon>
+          Modificar Registro de Ingreso
+        </ion-card-title>
+        <ion-card-subtitle>
+          Actualice la información del registro de acceso al Data Center
+        </ion-card-subtitle>
+      </ion-card-header>
+      
+      <ion-card-content>
+        <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
+          
+          <!-- Información del Técnico -->
+          <div class="section-header">
+            <ion-icon name="person-circle" class="section-icon"></ion-icon>
+            <h3>Información del Técnico</h3>
+          </div>
+
+          <!-- Nombre -->
+          <ion-item fill="outline" class="form-item">
+            <ion-label position="floating">Nombre *</ion-label>
+            <ion-input 
+              formControlName="nombre" 
+              type="text"
+              placeholder="Nombre del técnico">
+            </ion-input>
+            <ion-icon name="person" slot="start" class="form-icon"></ion-icon>
+          </ion-item>
+          
+          <div class="error-message" *ngIf="registroForm.get('nombre')?.touched && registroForm.get('nombre')?.errors?.['required']">
+            El nombre es requerido
+          </div>
+
+          <!-- Apellido -->
+          <ion-item fill="outline" class="form-item">
+            <ion-label position="floating">Apellido *</ion-label>
+            <ion-input 
+              formControlName="apellido" 
+              type="text"
+              placeholder="Apellido del técnico">
+            </ion-input>
+            <ion-icon name="person" slot="start" class="form-icon"></ion-icon>
+          </ion-item>
+          
+          <div class="error-message" *ngIf="registroForm.get('apellido')?.touched && registroForm.get('apellido')?.errors?.['required']">
+            El apellido es requerido
+          </div>
+
+          <!-- RUT -->
+          <ion-item fill="outline" class="form-item">
+            <ion-label position="floating">RUT *</ion-label>
+            <ion-input 
+              formControlName="rut" 
+              type="text"
+              placeholder="12.345.678-9">
+            </ion-input>
+            <ion-icon name="card" slot="start" class="form-icon"></ion-icon>
+          </ion-item>
+          
+          <div class="error-message" *ngIf="registroForm.get('rut')?.touched && registroForm.get('rut')?.errors?.['required']">
+            El RUT es requerido
+          </div>
+          <div class="error-message" *ngIf="registroForm.get('rut')?.touched && registroForm.get('rut')?.errors?.['rutInvalido']">
+            El RUT ingresado no es válido
+          </div>
+
+          <!-- Empresa -->
+          <ion-item fill="outline" class="form-item">
+            <ion-label position="floating">Empresa *</ion-label>
+            <ion-input 
+              formControlName="empresa" 
+              type="text"
+              placeholder="Nombre de la empresa">
+            </ion-input>
+            <ion-icon name="business" slot="start" class="form-icon"></ion-icon>
+          </ion-item>
+          
+          <div class="error-message" *ngIf="registroForm.get('empresa')?.touched && registroForm.get('empresa')?.errors?.['required']">
+            La empresa es requerida
+          </div>
+
+          <!-- Teléfono -->
+          <ion-item fill="outline" class="form-item">
+            <ion-label position="floating">Teléfono *</ion-label>
+            <ion-input 
+              formControlName="telefono" 
+              type="tel"
+              placeholder="+56 9 1234 5678">
+            </ion-input>
+            <ion-icon name="call" slot="start" class="form-icon"></ion-icon>
+          </ion-item>
+          
+          <div class="error-message" *ngIf="registroForm.get('telefono')?.touched && registroForm.get('telefono')?.errors?.['required']">
+            El teléfono es requerido
+          </div>
+
+          <!-- Email -->
+          <ion-item fill="outline" class="form-item">
+            <ion-label position="floating">Email *</ion-label>
+            <ion-input 
+              formControlName="email" 
+              type="email"
+              placeholder="tecnico@empresa.com">
+            </ion-input>
+            <ion-icon name="mail" slot="start" class="form-icon"></ion-icon>
+          </ion-item>
+          
+          <div class="error-message" *ngIf="registroForm.get('email')?.touched && registroForm.get('email')?.errors?.['required']">
+            El email es requerido
+          </div>
+          <div class="error-message" *ngIf="registroForm.get('email')?.touched && registroForm.get('email')?.errors?.['email']">
+            El email no tiene un formato válido
+          </div>
+
+          <!-- Información del Data Center -->
+          <div class="section-header">
+            <ion-icon name="business" class="section-icon"></ion-icon>
+            <h3>Ubicación</h3>
+          </div>
+
+          <!-- Data Center -->
+          <ion-item fill="outline" class="form-item">
+            <ion-label position="floating">Data Center *</ion-label>
+            <ion-select 
+              formControlName="dataCenter" 
+              placeholder="Seleccione un Data Center"
+              interface="popover"
+              (ionChange)="onDataCenterChange()">
+              <ion-select-option *ngFor="let dc of dataCenters" [value]="dc.id">
+                {{ dc.nombre }}
+              </ion-select-option>
+            </ion-select>
+            <ion-icon name="business" slot="start" class="form-icon"></ion-icon>
+          </ion-item>
+          
+          <div class="error-message" *ngIf="registroForm.get('dataCenter')?.touched && registroForm.get('dataCenter')?.errors?.['required']">
+            El Data Center es requerido
+          </div>
+
+          <!-- Sala -->
+          <ion-item fill="outline" class="form-item">
+            <ion-label position="floating">Sala *</ion-label>
+            <ion-select 
+              formControlName="sala" 
+              placeholder="Seleccione una sala"
+              interface="popover">
+              <ion-select-option *ngFor="let sala of salasDisponibles" [value]="sala">
+                {{ sala }}
+              </ion-select-option>
+            </ion-select>
+            <ion-icon name="layers" slot="start" class="form-icon"></ion-icon>
+          </ion-item>
+          
+          <div class="error-message" *ngIf="registroForm.get('sala')?.touched && registroForm.get('sala')?.errors?.['required']">
+            La sala es requerida
+          </div>
+
+          <!-- Información del Ticket -->
+          <div class="section-header">
+            <ion-icon name="document-text" class="section-icon"></ion-icon>
+            <h3>Información del Ticket</h3>
+          </div>
+
+          <!-- Tipo de Ticket -->
+          <ion-item fill="outline" class="form-item">
+            <ion-label position="floating">Tipo de Ticket *</ion-label>
+            <ion-select 
+              formControlName="tipoTicket" 
+              placeholder="Seleccione el tipo"
+              interface="popover">
+              <ion-select-option *ngFor="let tipo of tiposTicket" [value]="tipo.value">
+                {{ tipo.label }}
+              </ion-select-option>
+            </ion-select>
+            <ion-icon name="ticket" slot="start" class="form-icon"></ion-icon>
+          </ion-item>
+          
+          <div class="error-message" *ngIf="registroForm.get('tipoTicket')?.touched && registroForm.get('tipoTicket')?.errors?.['required']">
+            El tipo de ticket es requerido
+          </div>
+
+          <!-- Número de Ticket -->
+          <ion-item fill="outline" class="form-item">
+            <ion-label position="floating">Número de Ticket *</ion-label>
+            <ion-input 
+              formControlName="numeroTicket" 
+              type="text"
+              placeholder="CRQ123456 o INC654321">
+            </ion-input>
+            <ion-icon name="clipboard" slot="start" class="form-icon"></ion-icon>
+          </ion-item>
+          
+          <div class="error-message" *ngIf="registroForm.get('numeroTicket')?.touched && registroForm.get('numeroTicket')?.errors?.['required']">
+            El número de ticket es requerido
+          </div>
+
+          <!-- Responsable de Actividad -->
+          <ion-item fill="outline" class="form-item">
+            <ion-label position="floating">Responsable de Actividad *</ion-label>
+            <ion-input 
+              formControlName="responsable" 
+              type="text"
+              placeholder="Nombre del responsable">
+            </ion-input>
+            <ion-icon name="person-circle" slot="start" class="form-icon"></ion-icon>
+          </ion-item>
+          
+          <div class="error-message" *ngIf="registroForm.get('responsable')?.touched && registroForm.get('responsable')?.errors?.['required']">
+            El responsable de actividad es requerido
+          </div>
+
+          <!-- Autorizador de Ingreso -->
+          <ion-item fill="outline" class="form-item">
+            <ion-label position="floating">Autorizador de Ingreso *</ion-label>
+            <ion-input 
+              formControlName="autorizador" 
+              type="text"
+              placeholder="Nombre del autorizador">
+            </ion-input>
+            <ion-icon name="checkmark-circle" slot="start" class="form-icon"></ion-icon>
+          </ion-item>
+          
+          <div class="error-message" *ngIf="registroForm.get('autorizador')?.touched && registroForm.get('autorizador')?.errors?.['required']">
+            El autorizador de ingreso es requerido
+          </div>
+
+          <!-- Propósito de la Visita -->
+          <ion-item fill="outline" class="form-item">
+            <ion-label position="floating">Propósito de la Visita *</ion-label>
+            <ion-textarea 
+              formControlName="proposito"
+              placeholder="Describe el propósito de la visita al Data Center"
+              rows="3">
+            </ion-textarea>
+            <ion-icon name="document-text" slot="start" class="form-icon"></ion-icon>
+          </ion-item>
+          
+          <div class="error-message" *ngIf="registroForm.get('proposito')?.touched && registroForm.get('proposito')?.errors?.['required']">
+            El propósito de la visita es requerido
+          </div>
+
+          <!-- Observaciones -->
+          <ion-item fill="outline" class="form-item">
+            <ion-label position="floating">Observaciones</ion-label>
+            <ion-textarea 
+              formControlName="observaciones"
+              placeholder="Observaciones adicionales (opcional)"
+              rows="2">
+            </ion-textarea>
+            <ion-icon name="chatbubble-ellipses" slot="start" class="form-icon"></ion-icon>
+          </ion-item>
+
+          <!-- Estado del Registro -->
+          <div class="section-header">
+            <ion-icon name="checkmark-circle" class="section-icon"></ion-icon>
+            <h3>Estado del Registro</h3>
+          </div>
+
+          <ion-item fill="outline" class="form-item">
+            <ion-label position="floating">Estado *</ion-label>
+            <ion-select 
+              formControlName="estado" 
+              placeholder="Seleccione el estado"
+              interface="popover">
+              <ion-select-option *ngFor="let estado of estadosRegistro" [value]="estado.value">
+                {{ estado.label }}
+              </ion-select-option>
+            </ion-select>
+            <ion-icon name="flag" slot="start" class="form-icon"></ion-icon>
+          </ion-item>
+          
+          <div class="error-message" *ngIf="registroForm.get('estado')?.touched && registroForm.get('estado')?.errors?.['required']">
+            El estado es requerido
+          </div>
+
+          <!-- Botones de Acción -->
+          <div class="button-container">
+            <ion-button 
+              type="submit" 
+              expand="block" 
+              [disabled]="!registroForm.valid || isSubmitting"
+              class="submit-button">
+              <ion-icon name="save" slot="start" *ngIf="!isSubmitting"></ion-icon>
+              <ion-spinner slot="start" *ngIf="isSubmitting"></ion-spinner>
+              {{ isSubmitting ? 'Guardando...' : 'Actualizar Registro' }}
+            </ion-button>
+            
+            <ion-button 
+              type="button" 
+              expand="block" 
+              fill="outline" 
+              (click)="cancelar()"
+              [disabled]="isSubmitting"
+              class="cancel-button">
+              <ion-icon name="close" slot="start"></ion-icon>
+              Cancelar
+            </ion-button>
+          </div>
+        </form>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Registro no encontrado -->
+  <ng-template #registroNotFound>
+    <div class="not-found">
+      <ion-icon name="alert-circle" class="not-found-icon"></ion-icon>
+      <h2>Registro no encontrado</h2>
+      <p>El registro de ingreso que intenta editar no existe o ha sido eliminado.</p>
+      <ion-button routerLink="/listar" fill="outline">
+        <ion-icon name="arrow-back" slot="start"></ion-icon>
+        Volver a la Lista
+      </ion-button>
+    </div>
+  </ng-template>
+</ion-content>
